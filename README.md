@@ -22,5 +22,24 @@ usando el commando: git commit -m "onfiguración inicial (Parte 1)".
 *
 *
 *
+Ahora publico la creación de mi rama en local en github usando el comando:
+git push
+*
+Me marcó un error, pues traté de hacer push de los cambios de la rama que cree en local pero que no estaba en mi remoto de GitHub por lo que tuve que correr el comando:
+git push -u origin READme
+alternativamente pude haber corrido el comando:
+git push --set-upstream READme pues con eso hacemos que git sepa que cuando haga un push desde la rama que sea si desde esa rama ahora solo hago git push pues ya sabe a donde subir los cambios me explico? y si no existe esa rama pues la crea.
+*
+*
+Vuelvo a hacer otro commit para reportar este aprendizaje adquirido del push sin tener la rama en remoto. Uso el commando:
+git commit -m "Push de rama local, indicando a GH que debe de crear y usar esa rama" eso de ahí en adelante cada que haga:
+git push - así a secas..
+" 
+*
+*
+*
+Me acabo de dar cuenta que hice dos commits pero pues nunca antes hice git add jaja
+así que ahora hago:
+git add README.md y luego git commit -m "trackeando READ.me"
 
 Parte 2 (desarrollo del sitio):
