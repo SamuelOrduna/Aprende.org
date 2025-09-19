@@ -42,4 +42,31 @@ Me acabo de dar cuenta que hice dos commits pero pues nunca antes hice git add j
 así que ahora hago:
 git add README.md y luego git commit -m "trackeando READ.me"
 
-Parte 2 (desarrollo del sitio):
+Parte 2 (carpetas y estructura del repositorio/proyecto):
+*
+primero genero 2 carpetas con:
+mkdir css public
+luego:
+cd public  
+luego creo una carpeta para iconos de la marca y cosas así con:
+mkdir brand
+y creo una que se llame images usando:
+mkdir images 
+(esto para todo lo multimedia)
+(a nivel raiz del repositorio) 
+*
+luego a nivel raiz creo el index.html
+*
+con estas carpetas vacías iniciales creo los archivos de css (global.css) y genero el código base de mi index.html
+*
+ahora hago un PR para merge a main, solo para que main tenga esto y cada que quiera hacer cambios fuertes ahora si usar ramas para todo y PR pero ya teniendo algo en main al menos.
+*también renombro el texto en paréntesis a lado de Parte 2 para tener una mejor descricpcion mas detallada
+*
+hago:
+git add .
+y luego meto otro commit para indicar la creación de esta estructura base:
+git commit -m "Carpetas, Estructura del repositorio y archivos base"
+
+Parte 3 (Inicio del desarrollo):
+*
+*hago
