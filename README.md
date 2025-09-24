@@ -1,72 +1,24 @@
-# Aprende.org
-Imitación página web con Bootstrap
+Arranqué este proyecto como una imitación ligera y educativa de la página principal de aprende.org usando HTML, CSS y Bootstrap 5.3. Primero creé el repositorio en GitHub con README inicial, lo cloné con git clone https://github.com/SamuelOrduna/Aprende.org.git y me moví a la carpeta con cd Aprende.org. Para no trabajar directo en main, abrí una rama llamada READme con git checkout -b READme y confirmé con git branch. Empecé a escribir el README y, después de los primeros cambios, hice git add README.md y git commit -m "Configuración inicial (Parte 1)". Al intentar publicar, me tiró error porque la rama no existía en remoto, así que la emparejé con git push -u origin READme. Ya con eso, las siguientes veces puedo usar git push a secas desde esa rama. De paso hice otro commit para documentar este aprendizaje y, cuando noté que había cometido sin hacer add, lo corregí con git add README.md && git commit -m "Trackeando README.md".
 
-Parte 1 (configuración y creación de ramas):
+Luego armé la estructura del repo. En la raíz creé las carpetas css y public, y dentro de public agregué brand e images para los recursos de marca y media. En la raíz generé index.html y dentro de css un global.css. Hice git add . y git commit -m "Carpetas, estructura del repositorio y archivos base (Parte 2)", y abrí un PR de READme hacia main para dejar una base limpia y, a partir de ahí, trabajar con ramas de features y PRs para cada cambio grande.
 
-Lo primero que hice fue crear desde GitHub el repositorio nuevo para mi tarea y seleccioné la opción de añadir un readme.
+Con la estructura lista, empecé el desarrollo. En el <head> importé Bootstrap 5.3.8 y los Bootstrap Icons desde CDN, además del favicon que tomé al inspeccionar el código fuente de https://aprende.org/, y enlacé mi ./css/global.css. El bundle JS de Bootstrap lo dejé hasta el final del <body> para no bloquear el render. A partir de los componentes de la documentación de Bootstrap, adapté una navbar sencilla con el logo, un ícono de búsqueda y el botón de “Iniciar sesión” que cambia de ícono a texto según el breakpoint. Después construí el hero con un título grande en dos pesos tipográficos y un botón fantasma con borde redondeado. A la derecha coloqué la lista de categorías como tarjetas horizontales .cat con un riel lateral hecho con ::before y un overlay animado con ::after, todo sin añadir HTML extra. En el CSS hice que el contenido de .cat quedara por encima con z-index: 1, y el overlay por debajo..
 
-Luego cloné el repo con:
-git clone https://github.com/SamuelOrduna/Aprende.org.git
+En la sección “Te podría interesar” monté un carrusel horizontal con display: flex, overflow-x: auto y scroll-snap-type: x mandatory. Cada tarjeta .i-card tiene scroll-snap-align y un pie de color que indica la categoría. Para que se comporte bien en móviles, definí un ancho fluido de tarjeta con clamp() y centré la primera y la última usando calc() con variables CSS: básicamente, establezco --cardW y ajusto scroll-padding-left y scroll-padding-right a calc((100% - var(--cardW))/2), con lo cual el punto necesario queda al centro del viewport y, al hacer snap, la primera y la última tarjeta también se centran. O sea.. la fórmula es: el padding lateral debe ser la mitad de la diferencia entre el ancho del contenedor y el ancho de la tarjeta. Para pantallas grandes mantuve un gap generoso, algo bien, y, en @media, afiné tamaños y espaciados con clamp() para que todo escale suave sin saltos feos que lo hagan lucir añañin.
 
-Después generé una nueva rama (de nombre READme) para poder hacer commits al README.md usando el comando:
-git checkout -b READme
+El script del carrusel lo escribí en vanilla JS (js puro), encerrado en una IIFE (Immediately Invoked Function Expression). Primero calculo el “paso” de scroll sumando el ancho de la primera tarjeta más el gap computado (con getComputedStyle). Si detecto que no hay overflow suficiente, clono los ítems hasta que lo haya; así el auto-scroll siempre tiene “carretera”. El auto-scroll avanza cada cierto intervalo usando scrollBy con behavior: "smooth", y cuando llega al final resetea con scrollTo({ left: 0 }). También agregué botones “Anterior” y “Siguiente”, pausa automática en hover y focus, y pausa cuando la pestaña pierde visibilidad; al volver, reanudo el intervalo. Para que el paso se mantenga correcto al redimensionar la ventana, uso ResizeObserver y reinicio el temporizador y ya (la verdad no sabía si era necesario clonar la funcionalidad estética de la página, así que igual lo hice, más vale ir sobrado).
 
-y luego verifiqué que estuviera parado en ella usando:
-git branch
+Mi hoja de estilos global.css es mobile-first y está apoyada en variables. Definí colores de marca en :root (--ink, --edu, --cpe, --salud, --cultura, --human) para no repetir valores. Las tipografías, anchos y paddings usan clamp(min, ideal, max) para responder fluidamente al tamaño de pantalla. 
+--esto esá chido:D :
+Para animaciones me aseguré de respetar preferencias del usuario: si el sistema tiene activado “Reducir movimiento”, desactivo transiciones que no aportan y dejo las interacciones en seco; esa media query (@media (prefers-reduced-motion: reduce)) para temas de accesibilidad, yo personalmente me mareo a veces y me da asco. Evité márgenes raros y mejor usé gap tanto en flex como en grid, y entre detalles pequeños también me aseguré de que todas las imágenes tengan max-width: 100% y height: auto para que no se deformen. En la navbar, el logo escala con un max-width razonable para que no rompa el layout.
 
-ahora ya podría trabajar en esta nueva rama para no hacer commits directo a la rama main...
+El footer lo armé con un bloque de texto y los logos de conectividad, luego tres columnas simples para descargas (links de App Store y Google Play), legales y ayuda, y por último un remate con la liga de la fundación de Don Slim. Todo está centrado y se ve igual bien en pantallas pequeñas. En móviles, ajusté algunos paddings laterales con utilidades de Bootstrap y reglas específicas para que el hero quede centrado y la lista de categorías no se pegue al borde pq sentí que se veía horrible ese diseño en la página original. También hice que las flechas del carrusel tengan lo del
+focus para accesibilidad.
 
--- aquí procedo a guardar estos cambios en un commit llamado "configuración inicial (Parte 1)" --
-usando el commando: git commit -m "onfiguración inicial (Parte 1)".
+Para correrlo local basta con abrir index.html
 
-*
-*
-*
-Ahora publico la creación de mi rama en local en github usando el comando:
-git push
-*
-Me marcó un error, pues traté de hacer push de los cambios de la rama que cree en local pero que no estaba en mi remoto de GitHub por lo que tuve que correr el comando:
-git push -u origin READme
-alternativamente pude haber corrido el comando:
-git push --set-upstream READme pues con eso hacemos que git sepa que cuando haga un push desde la rama que sea si desde esa rama ahora solo hago git push pues ya sabe a donde subir los cambios me explico? y si no existe esa rama pues la crea.
-*
-*
-Vuelvo a hacer otro commit para reportar este aprendizaje adquirido del push sin tener la rama en remoto. Uso el commando:
-git commit -m "Push de rama local, indicando a GH que debe de crear y usar esa rama" eso de ahí en adelante cada que haga:
-git push - así a secas..
-" 
-*
-*
-*
-Me acabo de dar cuenta que hice dos commits pero pues nunca antes hice git add jaja
-así que ahora hago:
-git add README.md y luego git commit -m "trackeando READ.me"
+también añadí una explicación que intenté manter clara porque sé que usé hacks raros... xd 
+y ya
 
-Parte 2 (carpetas y estructura del repositorio/proyecto):
-*
-primero genero 2 carpetas con:
-mkdir css public
-luego:
-cd public  
-luego creo una carpeta para iconos de la marca y cosas así con:
-mkdir brand
-y creo una que se llame images usando:
-mkdir images 
-(esto para todo lo multimedia)
-(a nivel raiz del repositorio) 
-*
-luego a nivel raiz creo el index.html
-*
-con estas carpetas vacías iniciales creo los archivos de css (global.css) y genero el código base de mi index.html
-*
-ahora hago un PR para merge a main, solo para que main tenga esto y cada que quiera hacer cambios fuertes ahora si usar ramas para todo y PR pero ya teniendo algo en main al menos.
-*también renombro el texto en paréntesis a lado de Parte 2 para tener una mejor descricpcion mas detallada
-*
-hago:
-git add .
-y luego meto otro commit para indicar la creación de esta estructura base:
-git commit -m "Carpetas, Estructura del repositorio y archivos base"
 
-Parte 3 (Inicio del desarrollo):
-*
-*hago
+-FIN.
