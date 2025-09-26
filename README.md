@@ -28,3 +28,7 @@ y ya
 Enlaces de los Pull Requests dentro del READ.me
 https://github.com/SamuelOrduna/Aprende.org/pull/1
 https://github.com/SamuelOrduna/Aprende.org/pull/2
+
+
+Una vez que esté listo el código, debes desplegar la página a GitHub pages. Asegúrate que tu archivo esté a la altura raíz de tu repositorio y se llame index.html. Añade el enlace a tu página web en el READ.me (2 punto).
+https://samuelorduna.github.io/Aprende.org/
