@@ -1,0 +1,541 @@
+/* 
+Cómo uso las props de CSS:
+
+- :root y var(--…):
+  Sirven para guardar valores (como colores de marca o tamaños) en un solo lugar 
+  y luego usarlos en todo el CSS con var(--nombre). 
+  Ej: defino --verde: #006853 y después lo uso en botones, fondos, etc.
+
+- clamp(min, ideal, max):
+  Con esto puedo poner tamaños "fluidos" que se adaptan a la pantalla, 
+  pero siempre con un mínimo y un máximo. 
+  Ideal para fuentes, paddings o anchos de tarjetas.
+
+- scroll-snap (para carouseles):
+  Hace que el scroll “encaje” (por decirlo de alguna forma xd) de tarjeta en tarjeta automáticamente. 
+  Al contenedor le pongo scroll-snap-type y a cada tarjeta scroll-snap-align. 
+  En móvil puedo centrar las tarjetas con scroll-padding y scroll-snap-align: center.
+
+- scroll-behavior: smooth:
+  Hace que cuando hago scroll con un enlace o desde JS el movimiento sea suave.
+
+- ::before y ::after:
+  Estos son pseudoelementos que me permiten dibujar cosas extra (líneas, overlays, decoraciones) 
+  sin tener que meter más HTML. 
+  P.ejmp: un “riel” o una capa encima de .cat.
+
+- inset:
+  atajo para top, right, bottom, left al mismo tiempo. 
+  inset:0; equivale a poner top:0; right:0; bottom:0; left:0;.
+
+- z-index:
+  Sirve para decidir qué queda encima y qué queda debajo. 
+
+- border-radius: 999px:
+  Trucazo!!!! XDDD es para hacer círculos o pills sin pensar en la medida exacta.
+
+- prefers-reduced-motion:
+  Una media query que detecta si el usuario prefiere menos animaciones. 
+  En ese caso, corto o simplifico las transiciones
+
+  ---> la vdd siento que este ya está muy específico pero lo que hace es ver 
+  -- si un usuario tiene un su configuración de sistema operativo que si hay 
+  -- animaciones las haga más lentas o así, esto pq mucha gente se marea y les 
+  -- es molesto..
+
+    !!!se ve algo así:
+    **cuando no está activado**
+    -.box {
+      transition: transform 0.5s ease;
+    }
+
+  **Cuando SÍ esta activado (esto pq el usuario así lo tiene configurado) 
+    @media (prefers-reduced-motion: reduce) {
+      .box {
+        transition: none; /* corto las animaciones
+      }
+    }
+
+- place-items y gap:
+  place-items: center (en grid) centra vertical y horizontal fácil. 
+  gap (en flex o grid) me separa los elementos sin meter márgenes raros xd (un clásico)
+
+- overflow-x: hidden (en body):
+  Previene que aparezca un scroll lateral incómodo en layouts responsivos.
+
+- calc() con var():
+  Puedo hacer cálculos con variables CSS, por ejemplo para ajustar paddings 
+  y lograr que en un carrusel la primera y última tarjeta queden centradas.
+  --> este como también es bastante raro lo explicaré más: 
+  ---- QPor ejemplo: 
+  -->> Si queremos que el espacio que queda alrededor de una tarjeta sea simétrico
+  ---------------------------------------------------------------------------------------
+  ---------------------------------------------------------------------------------------
+  ** siento que lo explico mal.. así que aquí va una explicación que le pedí a chat
+  ---------------------------------------------------------------------------------------
+  ---------------------------------------------------------------------------------------
+  El caso típico: centrar la primera y la última tarjeta de un carrusel con scroll-snap.
+
+  Idea:
+  padding-inline = (ancho_del_contenedor - ancho_de_la_tarjeta) / 2
+
+  Ejemplo real:
+  Si el contenedor mide 1200px y cada tarjeta mide 360px,
+  entonces (1200 - 360) / 2 = 420px.
+  Eso significa que dejo 420px a la izquierda y 420px a la derecha,
+  y así la primera y la última tarjeta quedan perfectamente centradas.
+
+  Implementación:
+  Defino el ancho de tarjeta en una variable: --card-w.
+  Después uso calc() para restar el ancho de la tarjeta al 100% del contenedor
+  y dividirlo entre 2.
+  Para evitar resultados negativos (cuando la tarjeta es más grande que el contenedor)
+  lo envuelvo en un clamp() para limitar un mínimo de 0px.
+
+  Diferencia padding-inline vs scroll-padding-inline:
+  - padding-inline: agrega espacio real en los lados, útil si quiero que se vea aire extra.
+  - scroll-padding-inline: no agrega espacio visible, solo le dice al motor de snap
+    -considera que el borde empieza más adentro-. Útil si ya tengo layout medido.
+
+  Con esto, el navegador usa scroll-snap-align:center en las tarjetas
+  y se asegura de que al hacer scroll, la primera y última también encajen al centro.
+-------------------------------------------------------------------------------------------------
+
+- Responsivo:
+  Pues primero wmpiezo con lo de la filosofía mobile-first. 
+  Ej: en pantallas chicas muestro 1 tarjeta, en md muestro 2, 
+  y en >= 1400px agrando textos y espacios.
+
+- Imágenes y logos:
+  Siempre uso max-width:100% y height:auto para que se adapten 
+  y no se deformen.
+*/
+
+
+:root {
+  --ink: #030846;
+  --edu: #e01818;
+  --cpe: #0c6e7e;
+  --salud: #2da45a;
+  --cultura: #e2881e;
+  --human: #ec1664;
+}
+
+body {
+  background: #fff;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1280px;
+}
+
+.hero-wrap {
+  padding-block: clamp(24px, 4vw, 56px);
+}
+
+.hero-title {
+  color: var(--ink);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  font-size: clamp(35px, 4vw, 50px);
+  margin: 0 0 0.6rem 0;
+}
+.hero-title .strong {
+  font-weight: 600;
+}
+
+.btn-ghost {
+  --stroke: #0b0f2e;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid var(--stroke);
+  color: var(--stroke);
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.3rem 1.2rem;
+  font-weight: 500;
+  font-size: clamp(18px, 1.4vw, 18px);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.btn-ghost:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(3, 8, 70, 0.12);
+}
+
+.cat {
+  --c: #000;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: #fff;
+  border: 1px solid var(--c);
+  border-radius: 5px;
+  margin-bottom: 16px;
+  overflow: visible;
+  text-decoration: none;
+}
+.cat::before {
+  content: "";
+  position: absolute;
+  left: -15px;
+  top: 3px;
+  width: 7px;
+  height: calc(100% - 4px);
+  background: var(--c);
+  border-radius: 999px;
+  box-shadow: 0 0 0 6px #fff;
+  z-index: 0;
+}
+.cat::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: 0;
+  width: 0%;
+  background: var(--c);
+  transition: width 0.4s ease;
+  z-index: 0;
+}
+.cat > * {
+  position: relative;
+  z-index: 1;
+  transition: color 0.25s ease;
+}
+.cat:hover::after {
+  width: 100%;
+}
+.cat:hover .label,
+.cat:hover .chev {
+  color: #fff;
+}
+.cat:hover .icon {
+  background: #fff;
+  color: var(--c);
+}
+.cat .icon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--c);
+  color: #fff;
+  font-size: 28px;
+}
+.cat .label {
+  color: var(--c);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  padding: 15px 0;
+  font-size: clamp(18px, 2.2vw, 36px);
+}
+.cat .chev {
+  margin-left: auto;
+  color: var(--c);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.cat-edu {
+  --c: var(--edu);
+}
+.cat-cpe {
+  --c: var(--cpe);
+}
+.cat-salud {
+  --c: var(--salud);
+}
+.cat-cult {
+  --c: var(--cultura);
+}
+.cat-human {
+  --c: var(--human);
+}
+
+.interest {
+  padding-block: clamp(24px, 5vw, 46px);
+}
+.interest-title {
+  color: var(--ink);
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-size: clamp(26px, 3.4vw, 34px);
+  margin: 0 0 clamp(18px, 3vw, 32px) 0;
+}
+
+.i-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  gap: 2.5rem;
+  padding-bottom: 1rem;
+}
+.i-carousel::-webkit-scrollbar {
+  display: none;
+}
+.i-carousel .i-card {
+  flex: 0 0 clamp(220px, 40vw, 280px);
+  scroll-snap-align: start;
+}
+
+.i-card {
+  --c: #0c6e7e;
+  position: relative;
+  display: block;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid var(--c);
+  border-radius: 18px;
+  height: 260px;
+  padding: 26px 24px 96px 24px;
+  color: #111;
+  width: 150px;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.i-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(3, 8, 70, 0.1);
+}
+.i-external {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 28px;
+  color: var(--ink);
+  font-weight: 800;
+}
+.i-title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.12;
+  font-size: clamp(18px, 2.2vw, 24px);
+  margin: 0 0 8px 0;
+}
+.i-type {
+  font-weight: 700;
+  color: #222;
+  opacity: 0.85;
+  font-size: clamp(14px, 1.4vw, 15px);
+}
+.i-foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 76px;
+  background: var(--c);
+  color: #fff;
+  border-radius: 0 0 18px 18px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  font-size: clamp(18px, 2vw, 20px);
+}
+
+.i-capacitate {
+  --c: var(--cpe);
+}
+.i-salud {
+  --c: var(--salud);
+}
+.i-cultura {
+  --c: var(--cultura);
+}
+.i-human {
+  --c: var(--human);
+}
+
+.interest-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 38px;
+  margin-top: clamp(16px, 3vw, 24px);
+}
+.nav-arrow {
+  border: transparent;
+  width: 56px;
+  height: 56px;
+  background: #fff;
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  font-weight: 800;
+}
+.nav-arrow:focus {
+  outline: 3px solid #99b;
+  outline-offset: 2px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.navbar-brand img {
+  max-width: min(60vw, 320px);
+  height: auto;
+}
+
+.btn-icon-user {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #8d8d8d;
+  color: #fff;
+  border: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.btn-icon-user i {
+  font-size: 20px;
+  line-height: 1;
+}
+.btn-icon-user:active {
+  transform: translateY(1px);
+}
+
+.logo-slim {
+  max-width: 200px;
+  height: auto;
+}
+@media (min-width: 576px) {
+  .logo-slim {
+    max-width: 320px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1320px;
+  }
+  .hero-title {
+    font-size: 68px;
+  }
+  .cat {
+    padding: 18px 24px;
+  }
+  .cat .icon {
+    width: 64px;
+    height: 64px;
+    font-size: 30px;
+  }
+  .cat .label {
+    font-size: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cat::after {
+    transition: none;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .i-foot {
+    height: 64px;
+  }
+  .px-5 > img.w-100 {
+    display: block;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .container-fluid.px-5,
+  .container.px-5,
+  .hero-wrap.px-5 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .hero-col.ps-5 {
+    padding-left: 1rem !important;
+  }
+  .hero-col.pt-5 {
+    padding-top: 1.25rem !important;
+  }
+  .list-col {
+    padding-right: 0.5rem;
+  }
+  .cat {
+    margin-left: 12px;
+  }
+  .cat::before {
+    left: -12px;
+  }
+  .hero-title {
+    margin-bottom: 0.75rem;
+  }
+  .btn-ghost {
+    padding: 0.35rem 1.1rem;
+  }
+  .i-carousel {
+    --cardW: clamp(260px, 86vw, 340px);
+    scroll-snap-type: x mandatory;
+    scroll-snap-stop: always;
+    scroll-padding-left: calc((100% - var(--cardW)) / 2);
+    scroll-padding-right: calc((100% - var(--cardW)) / 2);
+    gap: 1.25rem;
+  }
+  .i-carousel .i-card {
+    flex: 0 0 var(--cardW);
+    scroll-snap-align: center;
+  }
+  .interest-nav {
+    gap: 24px;
+  }
+  .nav-arrow {
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+  }
+  .px-5.pb-5 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  .px-5.pb-5 > img.d-sm-none {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .hero-col {
+    align-items: center !important;
+    text-align: center !important;
+    padding-left: 0 !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .hero-col {
+    align-items: center !important;
+    text-align: center !important;
+    padding-left: 0 !important;
+  }
+  .i-carousel {
+    display: flex;
+    justify-content: center;
+    padding: 0 40px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 2.5rem;
+    padding-bottom: 1rem;
+  }
+  .i-carousel .i-card {
+    flex: 0 0 calc((100% - 2.5rem) / 2);
+    width: auto;
+    height: auto;
+    scroll-snap-align: start;
+  }
+}
