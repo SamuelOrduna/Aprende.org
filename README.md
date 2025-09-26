@@ -22,3 +22,9 @@ y ya
 
 
 -FIN.
+
+
+
+Enlaces de los Pull Requests dentro del READ.me
+https://github.com/SamuelOrduna/Aprende.org/pull/1
+https://github.com/SamuelOrduna/Aprende.org/pull/2
